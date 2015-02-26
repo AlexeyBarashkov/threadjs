@@ -1,4 +1,4 @@
-var workerExecutor = new WorkerExecutor({
+var workerExecutorExample = new WorkerExecutor({
   scripts: [
     location.origin + '/underscore.js'
   ],
@@ -26,21 +26,24 @@ var workerExecutor = new WorkerExecutor({
 });
 
 
-workerExecutor.execute('sum', 1, 2, 3).done(function(result) {
+var a = workerExecutorExample.execute('sum', 1, 2, 3).done(function(result) {
   console.log('Sum function result: ' + result + '; arguments were: [1,2,3]');
 });
 
-workerExecutor.execute('sin', 0).done(function(result) {
+var b = workerExecutorExample.execute('sin', 0).done(function(result) {
   console.log('Sin function result: ' + result + '; arguments were: [0]');
 });
 
-workerExecutor.execute('errorFunction').fail(function(reason) {
+var c = workerExecutorExample.execute('errorFunction').fail(function(reason) {
   console.log('ErrorFunction rejects Deferred with reason: "' + reason + '"');
 });
 
-workerExecutor.execute('externalLibraryUsage', [1,2,3]).done(function(result) {
+var d = workerExecutorExample.execute('externalLibraryUsage', [1,2,3]).done(function(result) {
   console.log('externalLibraryUsage function result: ' + result + '; arguments were: [ [1,2,3] ]');
 });
 
-
+// it's important to destroy workerExecutorExample object. Otherwise Web worker will be opened while browser tab is opened. Not good. Really.
+$.when(a,b,c,d).then(function() {
+  workerExecutorExample.destroy();
+});
 

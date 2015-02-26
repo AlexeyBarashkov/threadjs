@@ -19,6 +19,11 @@ gulp.task('compile', function() {
     .pipe(gulp.dest('./public'));
 });
 
+gulp.task('static', function() {
+  return gulp.src('./static/**')
+    .pipe(gulp.dest('./public'));
+});
+
 gulp.task('watch', ['compile'], function() {
   gulp.watch(['./js/**'], ['compile']);
 });
@@ -31,4 +36,4 @@ gulp.task('connectApp', function() {
   });
 });
 
-gulp.task('default', ['watch', 'connectApp']);
+gulp.task('default', ['static', 'watch', 'connectApp']);
