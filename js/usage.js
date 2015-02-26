@@ -43,7 +43,7 @@ var d = workerExecutorExample.execute('externalLibraryUsage', [1,2,3]).done(func
 });
 
 // it's important to destroy workerExecutorExample object. Otherwise Web worker will be opened while browser tab is opened. Not good. Really.
-$.when(a,b,c,d).then(function() {
+$.when(a,b,d).then(function() {
   workerExecutorExample.destroy();
 });
 
