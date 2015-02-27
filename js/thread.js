@@ -41,32 +41,45 @@ var workerText = workerBody.toString().match(/function[^{]+\{([\s\S]*)}$/)[1];
 
 class WorkerExecutor {
   constructor(options) {
-    var functions = options.functions || [],
-      scripts = options.scripts || [],
-      functionsLength = functions.length,
-      functionsAsString = 'var functions = {',
+    this.options = options;
+    this.workerText = '';
+
+    this.workerText += this.getScripts();
+    this.workerText += workerText;
+    this.workerText += this.getFunctions();
+
+    this.blob = new Blob([this.workerText], {type: 'text/javascript'});
+    this.query = [];
+  }
+
+  getScripts() {
+    var scripts = this.options.scripts || [],
       scriptsLength = scripts.length,
-      scriptsAsString = 'importScripts(',
-      newWorkerText = '';
+      scriptsAsString = 'importScripts(';
 
     if (scriptsLength) {
       _.each(scripts, function(src, i) {
         scriptsAsString += '\'' + src + '\'' + ((i + 1 === scriptsLength) ? ');' : ',');
       });
-      newWorkerText += scriptsAsString;
+      return scriptsAsString;
     }
 
-    newWorkerText += workerText;
+    return '';
+  }
+
+  getFunctions() {
+    var functions = this.options.functions || [],
+      functionsLength = functions.length,
+      functionsAsString = 'var functions = {';
 
     if (functionsLength) {
       _.each(functions, function(f, i) {
         functionsAsString += f.name + ': ' + f.toString() + ((i + 1 === functionsLength) ? '};' : ',');
       });
-      newWorkerText += functionsAsString;
+      return functionsAsString;
     }
 
-    this.blob = new Blob([newWorkerText], {type: 'text/javascript'});
-    this.query = [];
+    return '';
   }
 
   ensureWorker() {
@@ -110,6 +123,7 @@ class WorkerExecutor {
         deferred.reject();
       });
     }
+    this.worker = null;
   }
 
 }
